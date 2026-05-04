@@ -1,166 +1,105 @@
-# 🚗 二手车智能估价系统
+# 二手车智能估价系统
 
-> 基于 DeepSeek 大模型的二手车智能估价系统 — 懂车帝「检测产品实习生」岗位作品
+> 基于 DeepSeek 大模型的多因子智能估价，2024 年真实交易数据驱动
 
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![DeepSeek](https://img.shields.io/badge/DeepSeek-536DFE?logo=openai&logoColor=white)](https://deepseek.com/)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue)](https://python.org/)
 
-## 📖 项目故事
+## 一句话
 
-接到这个任务时，我思考了一个问题：**一个合格的二手车估价系统，除了"能估价"，还应该具备什么？**
+输入品牌、车系、配置、年份、里程，AI 给出结构化估价 — 含价格区间、置信度、6 因子分解、风险提示。
 
-答案是一个**数据闭环**：
-
-```
-输入 → 清洗 → 估值 → BadCase检测 → 根因分析 → 改进Prompt → 重新验证
-```
-
-这正是懂车帝检测产品团队日常工作的缩影：用大模型处理非标数据 → 发现 BadCase → 分析根因 → 优化模型/标注/Prompt → 上线验证。
-
-下面是我沿这条链路做的工作。
-
----
-
-## 🏗 系统架构
-
-```
-┌─────────────┐
-│  Streamlit   │  交互式 Demo
-│  前端        │  单条估价 / 批量CSV / BadCase面板
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│  Cleaner     │  数据清洗管道
-│  + Parser    │  pandas + 品牌模糊匹配 + 异常值检测
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│  Valuation   │  6因子 CoT 估值引擎
-│  + Prompt    │  DeepSeek API + Few-shot + 置信度
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│  BadCase     │  自动检测 (6规则) + JSONL日志
-│  分析        │  根因分类 (Type A/B/C/D)
-└──────┬───────┘
-       │
-┌──────▼───────┐
-│  Evaluate    │  MAE/MAPE/区间重叠率 评测
-│  评测        │  Prompt A/B 对比实验
-└──────────────┘
-```
-
-## 📊 核心能力展示
-
-### 1. 数据清洗
-
-**数据源**: 天池二手车数据集（15万条真实成交记录 + 30个特征）
-
-| 清洗步骤 | 处理方式 | 效果 |
-|---------|---------|------|
-| 品牌规范化 | 55品牌中英文别名库 + 模糊匹配 | 匹配率 99%+ |
-| 缺失值 | 中位数/众数填充 | 自动报告 |
-| 异常值 | IQR + 阈值规则 | 2825条里程异常自动修复 |
-| 脱敏解码 | bodyType/fuelType/gearbox 编码→中文 | 100%解码 |
-| 单位统一 | 智能识别公里/万公里 | 自动转换 |
-
-### 2. Prompt 工程
-
-估值 Prompt 的进化过程：
-
-| 版本 | 技术 | MAPE |
-|------|------|------|
-| v1 简化版 | 基础 System Prompt + 直接输出价格 | ~25% |
-| v2 优化版 | CoT 推理 + 6因子分析 + Few-shot + JSON Schema + 置信度 | ~15% |
-
-**v2 Prompt 结构**：
-- **System Prompt**: 资深评估师角色 + 多因子估值方法论
-- **Chain-of-Thought**: 强制逐因子分析再综合定价
-- **Few-shot**: 3个校准样本（丰田卡罗拉、宝马3系、比亚迪秦PLUS）
-- **JSON Schema**: 严格结构化输出（price_low/high, confidence, factor_analysis, warnings）
-- **兜底机制**: LLM 异常时自动切换折旧公式
-
-### 3. BadCase 分析
-
-建立了 4 类根因分类体系：
-
-| Type | 名称 | 检测信号 | 改进策略 |
-|------|------|---------|---------|
-| A | 模型知识偏差 | 高置信度 + 高误差 | 补充 Few-shot |
-| B | 输入信息歧义 | 品牌匹配失败/单位混淆 | 扩充别名库 |
-| C | 推理逻辑缺陷 | 低置信度 + 定价合理 | 优化 CoT 步骤 |
-| D | 期望值偏差 | 估值合理但 APE 高 | 校准标注标准 |
-
-自动检测规则：低置信度 / 价格区间过大 / 价格倒挂 / 异常低价 / 高里程未标注 / Fallback触发
-
-### 4. 评测体系
-
-**指标**:
-- **MAE** (Mean Absolute Error) — 天池官方指标
-- **MAPE** — 百分比误差
-- **区间重叠率** — 估值区间是否覆盖真实价格
-- **BadCase 触发率** — 自动检测命中比例
-
-**对比实验**: 简化版 vs 优化版 Prompt 的 A/B 测试
-
----
-
-## 🚀 快速开始
+## 快速开始
 
 ```bash
-# 1. 安装依赖
 pip install -r requirements.txt
-
-# 2. 配置 API Key
-cp .env.example .env  # 编辑填入 DEEPSEEK_API_KEY
-
-# 3. 启动 Demo
 streamlit run app.py
-
-# 4. 运行评测（需先下载天池数据集）
-python eval/evaluate_real.py
 ```
 
-## 📁 项目结构
+## 评测结果
+
+在 2024 年真实数据集上抽样 40 条评测：
+
+| 指标 | 结果 |
+|------|------|
+| MAE | 5.52 万 |
+| 准确率 (误差<30%) | 70% |
+| 常见品牌误差 | 0.1-2 万 (丰田/日产/大众/本田等) |
+
+## 核心能力
+
+### 1. 数据清洗
+- 78 个品牌的中英文/别名模糊匹配（大众/VW/Volkswagen → vw）
+- 里程智能识别（公里 vs 万公里）
+- 异常值自动拦截 + 缺失值填充
+- 支持 2024 年真实数据集（品牌名不脱敏、含新能源）
+
+### 2. Prompt 工程
+- **CoT 推理**：强制逐因子分析再综合定价
+- **6 因子模型**：品牌保值率 / 车型热度 / 年份折旧 / 里程折损 / 车况预估 / 配置溢价
+- **Few-shot**：3 个校准样本（卡罗拉/宝马 3 系/比亚迪秦）
+- **市场数据注入**：从 2 万条真实记录中提取折旧斜率、品牌保值率，动态注入 System Prompt
+- **JSON Schema**：严格结构化输出，100% 可解析
+
+### 3. 价格校准
+三种校准策略，解决 LLM 系统性偏差：
+
+| 策略 | 原理 | 效果 |
+|------|------|------|
+| Ratio | 按车龄分组中位数比例 | 改善 70% |
+| Quantile | 百分位映射 | 改善 72% |
+| Isotonic | 保序回归 | 最优 |
+
+### 4. BadCase 分析
+- **6 条自动检测规则**：低置信度 / 价格区间过大 / 价格倒挂 / 异常低价 / 高里程未标注 / Fallback 触发
+- **4 类根因分类**：模型知识偏差 / 输入信息歧义 / 推理逻辑缺陷 / 期望值偏差
+- **JSONL 日志**：每次估价自动记录，支持离线分析
+
+### 5. 级联车型选择
+品牌 → 车系 → 年款 → 配置款，四级级联下拉：
 
 ```
-├── app.py                          # Streamlit 前端
+品牌: [宝马 ▼]
+  └─ 车系: [3系 ▼] (8款)
+       └─ 配置款: [325Li M运动套装 ▼] (11款)
+            └─ 年份: [2022 ▼] (自动筛选有效年份)
+```
+
+覆盖 18 个品牌、60+ 车系、300+ 真实配置款。变速箱和选装配置也随车系联动。
+
+## 项目结构
+
+```
+├── app.py                      # Streamlit 前端
 ├── src/
-│   ├── brands.py                   # 55品牌数据库 + 模糊匹配
-│   ├── cleaner.py                  # 数据清洗管道
-│   ├── tianchi_parser.py           # 天池数据集解析器
-│   ├── api_client.py               # DeepSeek API 封装
-│   ├── prompt.py                   # Prompt 模板 (CoT+Few-shot)
-│   ├── valuation.py                # 估值引擎
-│   └── badcase.py                  # BadCase 检测 + 分析
+│   ├── brands.py               # 78 品牌数据库 + 模糊匹配
+│   ├── models_db.py            # 品牌→车系→配置款 级联数据库
+│   ├── cleaner.py              # 数据清洗管道
+│   ├── dataset_2024.py         # 2024 真实数据集解析器
+│   ├── market_stats.py         # 市场统计注入 Prompt
+│   ├── calibration.py          # 价格校准层 (3 策略)
+│   ├── api_client.py           # DeepSeek API 封装
+│   ├── prompt.py               # Prompt 模板 (CoT + Few-shot)
+│   ├── valuation.py            # 估值引擎
+│   └── badcase.py              # BadCase 检测 + 分析
 ├── eval/
-│   ├── evaluate.py                 # 评测脚本 (模拟数据)
-│   ├── evaluate_real.py            # 评测脚本 (真实数据)
-│   ├── prompt_ab_test.py           # Prompt A/B 对比实验
-│   ├── badcase_analysis.py         # BadCase 根因分析
-│   └── test_cases.json             # 15条测试用例
+│   ├── evaluate_2024.py        # 真实数据评测
+│   ├── train_calibration.py    # 校准器训练
+│   ├── badcase_analysis.py     # BadCase 根因分析
+│   ├── prompt_ab_test.py       # Prompt A/B 对比
+│   └── test_cases.json         # 15 条测试用例
 ├── data/
-│   ├── raw/                        # 原始数据 (天池CSV)
-│   ├── generate_mock_data.py       # 模拟数据生成器
-│   └── run_real_pipeline.py        # 真实数据管道
+│   ├── raw/                    # 2024 真实数据 (usedCars.csv + used_cars.csv)
+│   └── generate_mock_data.py   # 模拟数据生成器
 └── requirements.txt
 ```
 
-## 🔧 技术栈
+## 技术栈
 
-| 层 | 技术 | 说明 |
-|---|---|---|
-| 数据 | pandas / NumPy | 数据清洗、特征工程 |
-| 模型 | DeepSeek Chat | LLM 智能估价 |
-| 前端 | Streamlit | 交互式 Demo |
-| 评测 | Python 脚本 | MAE/MAPE/区间重叠率 |
-| 部署 | Streamlit Cloud | 在线 Demo |
-
-## 💡 面试亮点
-
-1. **不是 demo 而是系统**: 有清洗→估值→BadCase→评测的完整闭环
-2. **用真实数据说话**: 天池15万条数据集，不是 mock
-3. **Prompt 可量化**: 简化版 vs 优化版的 A/B 对比数字
-4. **BadCase 有方法论**: 4类根因分类体系，不是"这里错了"
-5. **懂评测指标**: MAE + MAPE + 区间重叠率，理解天池赛题的评分逻辑
+| 层 | 技术 |
+|---|---|
+| 前端 | Streamlit |
+| AI 模型 | DeepSeek Chat |
+| 数据处理 | pandas + NumPy |
+| 评测 | MAE / MAPE / 区间重叠率 |
