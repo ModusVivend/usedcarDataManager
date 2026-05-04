@@ -14,7 +14,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from src.cleaner import clean_single_input, load_data, clean_data, print_cleaning_report
 from src.valuation import valuate
 from src.badcase import log_valuation, analyze_logs, detect_badcases, print_analysis_report
-from src.brands import BRANDS, get_brand_info, get_models, get_new_car_price, fuzzy_match_brand, normalize_brand
+from src.brands import BRANDS, get_brand_info, get_new_car_price, fuzzy_match_brand, normalize_brand
+from src.models_db import get_series_names, get_trims, get_price_range, generate_years
 
 st.set_page_config(
     page_title="二手车智能估价",
@@ -46,57 +47,90 @@ with st.sidebar:
     st.markdown("输入车辆详细信息，获取AI多因子智能估价")
     st.markdown("---")
 
-    # ── 基本信息 ──
+    # ── 基本信息 (级联选择) ──
     st.subheader("📌 基本信息")
 
-    # 品牌
+    # 品牌列表
     brand_options = sorted([
         f"{info['name_cn']} ({info['name_en']})"
         for info in BRANDS.values()
     ], key=lambda x: x.split("(")[0])
 
+    # Step 1: 品牌
     brand_selected = st.selectbox(
         "品牌 *",
         options=[""] + brand_options,
-        help="选择或输入车辆品牌"
+        help="选择车辆品牌"
     )
     brand_manual = st.text_input("或手动输入品牌", placeholder="如: 奔驰、BMW、大众...")
     raw_brand = brand_manual.strip() or (brand_selected.split("(")[0].strip() if brand_selected else "")
+    brand_key = normalize_brand(raw_brand) if raw_brand else None
 
-    # 车系
-    model = st.text_input("车系 *", placeholder="如: 3系、卡罗拉、Model Y...")
+    # Step 2: 车系（级联品牌）
+    series_options = []
+    if brand_key:
+        series_names = get_series_names(brand_key)
+        series_options = [""] + series_names
 
-    # 品牌自动补全
-    if raw_brand:
-        brand_key = normalize_brand(raw_brand)
-        if brand_key:
-            models = get_models(brand_key)
-            if models:
-                cols_model = st.columns(4)
-                for i, m in enumerate(models[:12]):
-                    with cols_model[i % 4]:
-                        if st.button(m, key=f"model_{m}", use_container_width=True):
-                            st.session_state["selected_model"] = m
-    if "selected_model" in st.session_state and not model:
-        model = st.session_state["selected_model"]
+    if series_options:
+        series = st.selectbox(
+            "车系 *",
+            options=series_options,
+            help="选择车系"
+        )
+    else:
+        series = st.text_input(
+            "车系 *" if not brand_key else f"车系 * (暂无{raw_brand}的级联数据，请手动输入)",
+            placeholder="如: 3系、卡罗拉、Model Y..."
+        )
 
-    # 版本/配置款
-    version = st.text_input(
-        "版本/配置款",
-        placeholder="如: 320Li M运动套装、豪华版、尊贵版、Performance...",
-        help="具体的配置版本名称，越详细估价越准"
-    )
+    # Step 3: 配置款（级联车系）
+    trim_options = []
+    if brand_key and series and series in get_series_names(brand_key):
+        trims = get_trims(brand_key, series)
+        trim_options = [""] + trims
+
+    if trim_options:
+        version = st.selectbox(
+            "配置款",
+            options=trim_options,
+            help="选择具体配置版本"
+        )
+    else:
+        version = st.text_input(
+            "配置款",
+            placeholder="如: 320Li M运动套装、1.2T精英版、长续航全轮驱动版...",
+            help="具体的配置版本名称，越详细估价越准"
+        )
+
+    # Step 4: 年份（级联车系）
+    year_options = []
+    if brand_key and series and series in get_series_names(brand_key):
+        years = generate_years(brand_key, series)
+        year_options = [""] + [str(y) for y in reversed(years)]  # 最新的在前
+
+    if year_options:
+        year_str = st.selectbox("上牌年份 *", options=year_options)
+        year = int(year_str) if year_str else 2022
+    else:
+        year = st.number_input("上牌年份 *", min_value=1990, max_value=2026, value=2022)
+
+    # 显示新车指导价参考
+    if brand_key and series:
+        price_range = get_price_range(brand_key, series)
+        if price_range:
+            st.caption(f"💰 新车指导价参考: {price_range[0]} - {price_range[1]} 万元")
+
+    # 使用 series 作为 model
+    model = series if series else ""
 
     st.markdown("---")
 
     # ── 车辆参数 ──
     st.subheader("⚙️ 车辆参数")
 
-    col_y, col_m = st.columns(2)
-    with col_y:
-        year = st.number_input("上牌年份 *", min_value=1990, max_value=2026, value=2022)
-    with col_m:
-        mileage_input = st.text_input("行驶里程 *", placeholder="50000公里 或 5万公里")
+    mileage_input = st.text_input("行驶里程 *", placeholder="如: 50000公里 或 5万公里",
+                                   help="输入公里或万公里（>=10000视为公里，<10000视为万公里）")
 
     col_t, col_e = st.columns(2)
     with col_t:
