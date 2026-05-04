@@ -1,0 +1,152 @@
+[
+  {
+    "id": "tc001",
+    "brand": "丰田",
+    "model": "卡罗拉",
+    "year": 2021,
+    "mileage_km": 40000,
+    "expected_price_low": 7.0,
+    "expected_price_high": 9.5,
+    "description": "典型保值神车，5年4万公里"
+  },
+  {
+    "id": "tc002",
+    "brand": "宝马",
+    "model": "3系",
+    "year": 2019,
+    "mileage_km": 100000,
+    "expected_price_low": 11.0,
+    "expected_price_high": 16.5,
+    "description": "豪华B级7年10万公里"
+  },
+  {
+    "id": "tc003",
+    "brand": "比亚迪",
+    "model": "秦PLUS",
+    "year": 2023,
+    "mileage_km": 20000,
+    "expected_price_low": 5.5,
+    "expected_price_high": 9.0,
+    "description": "国产新能源3年2万公里"
+  },
+  {
+    "id": "tc004",
+    "brand": "本田",
+    "model": "雅阁",
+    "year": 2022,
+    "mileage_km": 30000,
+    "expected_price_low": 13.0,
+    "expected_price_high": 18.0,
+    "description": "日系B级4年3万公里"
+  },
+  {
+    "id": "tc005",
+    "brand": "大众",
+    "model": "朗逸",
+    "year": 2018,
+    "mileage_km": 80000,
+    "expected_price_low": 4.5,
+    "expected_price_high": 7.0,
+    "description": "德系家用8年8万公里"
+  },
+  {
+    "id": "tc006",
+    "brand": "特斯拉",
+    "model": "Model 3",
+    "year": 2024,
+    "mileage_km": 15000,
+    "expected_price_low": 17.0,
+    "expected_price_high": 22.0,
+    "description": "纯电准新车2年1.5万公里"
+  },
+  {
+    "id": "tc007",
+    "brand": "保时捷",
+    "model": "卡宴",
+    "year": 2020,
+    "mileage_km": 60000,
+    "expected_price_low": 45.0,
+    "expected_price_high": 65.0,
+    "description": "豪华SUV 6年6万公里"
+  },
+  {
+    "id": "tc008",
+    "brand": "雷克萨斯",
+    "model": "ES",
+    "year": 2021,
+    "mileage_km": 50000,
+    "expected_price_low": 20.0,
+    "expected_price_high": 28.0,
+    "description": "日系豪华5年5万公里"
+  },
+  {
+    "id": "tc009",
+    "brand": "雪铁龙",
+    "model": "C5",
+    "year": 2016,
+    "mileage_km": 120000,
+    "expected_price_low": 3.0,
+    "expected_price_high": 6.0,
+    "description": "法系冷门10年12万公里"
+  },
+  {
+    "id": "tc010",
+    "brand": "奔驰",
+    "model": "C级",
+    "year": 2022,
+    "mileage_km": 25000,
+    "expected_price_low": 22.0,
+    "expected_price_high": 28.0,
+    "description": "豪华B级4年2.5万公里"
+  },
+  {
+    "id": "tc011",
+    "brand": "byd",
+    "model": "海豚",
+    "year": 2025,
+    "mileage_km": 8000,
+    "expected_price_low": 7.0,
+    "expected_price_high": 10.0,
+    "description": "国产小车准新车(测试英文品牌名)"
+  },
+  {
+    "id": "tc012",
+    "brand": "梅赛德斯",
+    "model": "E级",
+    "year": 2023,
+    "mileage_km": 35000,
+    "expected_price_low": 30.0,
+    "expected_price_high": 42.0,
+    "description": "测试品牌别名(梅赛德斯→奔驰)"
+  },
+  {
+    "id": "tc013",
+    "brand": "五菱",
+    "model": "宏光MINIEV",
+    "year": 2024,
+    "mileage_km": 12000,
+    "expected_price_low": 2.0,
+    "expected_price_high": 3.5,
+    "description": "微车准新车(极端低价)"
+  },
+  {
+    "id": "tc014",
+    "brand": "路虎",
+    "model": "揽胜",
+    "year": 2018,
+    "mileage_km": 90000,
+    "expected_price_low": 50.0,
+    "expected_price_high": 80.0,
+    "description": "豪华SUV 8年9万公里(高残值)"
+  },
+  {
+    "id": "tc015",
+    "brand": "吉利",
+    "model": "星越L",
+    "year": 2025,
+    "mileage_km": 5000,
+    "expected_price_low": 11.0,
+    "expected_price_high": 16.0,
+    "description": "国产热门SUV准新车"
+  }
+]

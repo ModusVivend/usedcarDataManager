@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+venv/
+.venv/
+data/processed/
+data/raw/
+eval/eval_report.json
+*.jsonl
+.streamlit/
