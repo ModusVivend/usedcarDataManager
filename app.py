@@ -67,21 +67,24 @@ with st.sidebar:
     brand_key = normalize_brand(raw_brand) if raw_brand else None
 
     # Step 2: 车系（级联品牌）
-    series_options = []
     if brand_key:
         series_names = get_series_names(brand_key)
-        series_options = [""] + series_names
-
-    if series_options:
-        series = st.selectbox(
-            "车系 *",
-            options=series_options,
-            help="选择车系"
-        )
+        if series_names:
+            series = st.selectbox(
+                f"车系 * ({len(series_names)}款)",
+                options=[""] + series_names,
+                help="选择车系"
+            )
+        else:
+            series = st.text_input(
+                f"车系 * ({raw_brand}暂无级联数据，请手动输入)",
+                placeholder="如: 3系、卡罗拉、Model Y..."
+            )
     else:
         series = st.text_input(
-            "车系 *" if not brand_key else f"车系 * (暂无{raw_brand}的级联数据，请手动输入)",
-            placeholder="如: 3系、卡罗拉、Model Y..."
+            "车系 * (请先选择品牌)" if not raw_brand else f"车系 * (品牌'{raw_brand}'未识别)",
+            placeholder="如: 3系、卡罗拉、Model Y...",
+            disabled=not raw_brand
         )
 
     # Step 3: 配置款（级联车系）
