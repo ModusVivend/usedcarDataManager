@@ -277,6 +277,142 @@ BRANDS = {
         "aliases": ["坦克", "tank", "tk", "长城坦克"],
         "depreciation_rate": 0.78, "country": "中国", "tier": 2
     },
+    # === 2024数据集新增品牌 ===
+    "aito": {
+        "name_cn": "AITO问界", "name_en": "AITO",
+        "aliases": ["aito", "AITO", "问界", "aito问界", "华为问界", "赛力斯问界"],
+        "depreciation_rate": 0.74, "country": "中国", "tier": 2
+    },
+    "leapmotor": {
+        "name_cn": "零跑", "name_en": "Leapmotor",
+        "aliases": ["零跑", "leapmotor", "零跑汽车"],
+        "depreciation_rate": 0.70, "country": "中国", "tier": 2
+    },
+    "nio": {
+        "name_cn": "蔚来", "name_en": "NIO",
+        "aliases": ["蔚来", "nio", "wl", "未来", "蔚來"],
+        "depreciation_rate": 0.72, "country": "中国", "tier": 2
+    },
+    "nevo": {
+        "name_cn": "哪吒", "name_en": "Nevo",
+        "aliases": ["哪吒", "nevo", "nezha", "哪吒汽车"],
+        "depreciation_rate": 0.68, "country": "中国", "tier": 2
+    },
+    "lantu": {
+        "name_cn": "岚图", "name_en": "Lantu",
+        "aliases": ["岚图", "lantu", "岚图汽车", "东风岚图"],
+        "depreciation_rate": 0.72, "country": "中国", "tier": 2
+    },
+    "zeekr": {
+        "name_cn": "极氪", "name_en": "Zeekr",
+        "aliases": ["极氪", "zeekr", "极氪汽车", "吉利极氪"],
+        "depreciation_rate": 0.73, "country": "中国", "tier": 2
+    },
+    "hiphi": {
+        "name_cn": "高合", "name_en": "HiPhi",
+        "aliases": ["高合", "hiphi", "高合汽车"],
+        "depreciation_rate": 0.65, "country": "中国", "tier": 2
+    },
+    "avatr": {
+        "name_cn": "阿维塔", "name_en": "Avatr",
+        "aliases": ["阿维塔", "avatr", "阿维塔科技"],
+        "depreciation_rate": 0.71, "country": "中国", "tier": 2
+    },
+    "im-motors": {
+        "name_cn": "智己", "name_en": "IM Motors",
+        "aliases": ["智己", "im motors", "智己汽车"],
+        "depreciation_rate": 0.70, "country": "中国", "tier": 2
+    },
+    "denza": {
+        "name_cn": "腾势", "name_en": "Denza",
+        "aliases": ["腾势", "denza", "比亚迪腾势", "腾势汽车"],
+        "depreciation_rate": 0.73, "country": "中国", "tier": 2
+    },
+    "deepal": {
+        "name_cn": "深蓝", "name_en": "Deepal",
+        "aliases": ["深蓝", "deepal", "长安深蓝", "深蓝汽车"],
+        "depreciation_rate": 0.71, "country": "中国", "tier": 2
+    },
+    "voyah": {
+        "name_cn": "岚图", "name_en": "Voyah",
+        "aliases": ["voyah", "岚图"],
+        "depreciation_rate": 0.72, "country": "中国", "tier": 2
+    },
+    "baic": {
+        "name_cn": "北京汽车", "name_en": "BAIC",
+        "aliases": ["北京", "baic", "北汽", "北京汽车"],
+        "depreciation_rate": 0.70, "country": "中国", "tier": 2
+    },
+    "jac": {
+        "name_cn": "江淮", "name_en": "JAC",
+        "aliases": ["江淮", "jac", "江淮汽车", "江汽"],
+        "depreciation_rate": 0.68, "country": "中国", "tier": 2
+    },
+    "soueast": {
+        "name_cn": "东南", "name_en": "Soueast",
+        "aliases": ["东南", "soueast", "东南汽车"],
+        "depreciation_rate": 0.67, "country": "中国", "tier": 2
+    },
+    "smart": {
+        "name_cn": "Smart", "name_en": "Smart",
+        "aliases": ["smart", "精灵", "奔驰smart"],
+        "depreciation_rate": 0.75, "country": "德国", "tier": 2
+    },
+    "polestar": {
+        "name_cn": "极星", "name_en": "Polestar",
+        "aliases": ["polestar", "极星", "polestar极星", "沃尔沃极星"],
+        "depreciation_rate": 0.68, "country": "瑞典", "tier": 2
+    },
+    "swm": {
+        "name_cn": "SWM斯威", "name_en": "SWM",
+        "aliases": ["swm", "斯威", "swm斯威"],
+        "depreciation_rate": 0.65, "country": "中国", "tier": 2
+    },
+    "maxus": {
+        "name_cn": "大通", "name_en": "MAXUS",
+        "aliases": ["大通", "maxus", "上汽大通", "上汽maxus"],
+        "depreciation_rate": 0.70, "country": "中国", "tier": 2
+    },
+    "jetta-brand": {
+        "name_cn": "捷达", "name_en": "Jetta",
+        "aliases": ["捷达", "jetta", "大众捷达"],
+        "depreciation_rate": 0.74, "country": "中国", "tier": 2
+    },
+    "roewe": {
+        "name_cn": "荣威", "name_en": "Roewe",
+        "aliases": ["荣威", "roewe", "荣威汽车", "上汽荣威"],
+        "depreciation_rate": 0.71, "country": "中国", "tier": 2
+    },
+    "wey": {
+        "name_cn": "魏牌", "name_en": "WEY",
+        "aliases": ["魏牌", "wey", "魏", "wey牌"],
+        "depreciation_rate": 0.72, "country": "中国", "tier": 2
+    },
+    "changan-kaicheng": {
+        "name_cn": "长安凯程", "name_en": "Kaicheng",
+        "aliases": ["凯程", "长安凯程", "kaicheng"],
+        "depreciation_rate": 0.68, "country": "中国", "tier": 2
+    },
+    "venucia": {
+        "name_cn": "启辰", "name_en": "Venucia",
+        "aliases": ["启辰", "venucia", "东风启辰", "日产启辰"],
+        "depreciation_rate": 0.70, "country": "中国", "tier": 2
+    },
+    "ds": {
+        "name_cn": "DS", "name_en": "DS",
+        "aliases": ["ds", "谛艾仕", "法国ds"],
+        "depreciation_rate": 0.62, "country": "法国", "tier": 2
+    },
+    "zotye": {
+        "name_cn": "众泰", "name_en": "Zotye",
+        "aliases": ["众泰", "zotye", "众泰汽车"],
+        "depreciation_rate": 0.60, "country": "中国", "tier": 2
+    },
+    "seres": {
+        "name_cn": "赛力斯", "name_en": "Seres",
+        "aliases": ["赛力斯", "seres", "赛力斯汽车"],
+        "depreciation_rate": 0.72, "country": "中国", "tier": 2
+    },
 }
 
 # 热门车型系列
