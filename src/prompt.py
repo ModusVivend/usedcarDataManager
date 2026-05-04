@@ -197,13 +197,24 @@ def build_user_prompt(brand: str, model: str, year: int, mileage_km: float,
 def build_messages(brand: str, model: str, year: int, mileage_km: float,
                    extra_context: dict | None = None) -> list[dict]:
     """
-    构建完整的 messages 数组（System + Few-shot + User）
+    构建完整的 messages 数组（System + Market Data + Few-shot + User）
 
     Args:
         extra_context: {version, transmission, emission, color, condition, configs, city, extra}
     """
     ctx = extra_context or {}
-    messages = [{"role": "system", "content": SYSTEM_PROMPT + "\n\n" + OUTPUT_SCHEMA_DESC}]
+
+    # 动态注入市场数据
+    system_content = SYSTEM_PROMPT + "\n\n" + OUTPUT_SCHEMA_DESC
+    try:
+        from src.market_stats import compute_market_reference
+        market_ref = compute_market_reference()
+        if market_ref:
+            system_content = SYSTEM_PROMPT + "\n\n" + market_ref + "\n\n" + OUTPUT_SCHEMA_DESC
+    except Exception:
+        pass  # 无法加载市场数据时使用默认 Prompt
+
+    messages = [{"role": "system", "content": system_content}]
 
     # 添加 few-shot 示例
     for ex in FEW_SHOT_EXAMPLES:
