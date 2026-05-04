@@ -806,3 +806,128 @@ def generate_years(brand_key: str, series_name: str) -> list[int]:
     start, end = info["years"]
     end_year = 2026 if end == "至今" else end
     return list(range(max(start, 2005), end_year + 1))
+
+
+# ============================================================
+# 变速箱 & 配置 — 按车系智能推荐
+# ============================================================
+
+# 按品牌/车系类型智能推断变速箱选项
+_TRANSMISSION_BY_CATEGORY = {
+    # 豪华品牌燃油车
+    "luxury_petrol": ["自动 (AT)", "双离合 (DCT)", "手动/自动一体"],
+    # 日系
+    "japanese": ["CVT无级变速", "自动 (AT)", "E-CVT (混动)", "手动 (MT)"],
+    # 德系
+    "german": ["双离合 (DCT)", "自动 (AT)", "手动 (MT)"],
+    # 国产燃油
+    "domestic_petrol": ["双离合 (DCT)", "CVT无级变速", "自动 (AT)", "手动 (MT)"],
+    # 新能源
+    "ev": ["电动车单速变速箱"],
+    # 混动
+    "hybrid": ["E-CVT (混动)", "自动 (AT)", "双离合 (DCT)"],
+    # SUV/硬派
+    "suv": ["自动 (AT)", "双离合 (DCT)", "CVT无级变速", "手动 (MT)"],
+}
+
+# 品牌分类
+_BRAND_CATEGORY = {
+    "bmw": "luxury_petrol", "mercedes-benz": "luxury_petrol", "audi": "luxury_petrol",
+    "porsche": "luxury_petrol", "cadillac": "luxury_petrol", "volvo": "luxury_petrol",
+    "lexus": "luxury_petrol", "land-rover": "luxury_petrol",
+    "toyota": "japanese", "honda": "japanese", "nissan": "japanese",
+    "mazda": "japanese", "subaru": "japanese", "mitsubishi": "japanese",
+    "volkswagen": "german", "skoda": "german",
+    "byd": "ev", "tesla": "ev", "nio": "ev", "xpeng": "ev", "li-auto": "hybrid",
+    "haval": "suv", "great-wall": "suv", "jeep": "suv", "tank": "suv",
+    "geely": "domestic_petrol", "changan": "domestic_petrol", "chery": "domestic_petrol",
+}
+
+# 按车系推荐亮点配置
+_SERIES_HIGHLIGHTS = {
+    "宝马": {
+        "3系": ["M运动套装", "哈曼卡顿音响", "HUD抬头显示", "无线CarPlay", "主动巡航", "360全景影像"],
+        "5系": ["Nappa真皮座椅", "哈曼卡顿/B&W音响", "后排娱乐系统", "四区自动空调", "自适应LED大灯"],
+        "X3": ["xDrive四驱", "全景天窗", "电动尾门", "驾驶辅助Plus", "M运动套装"],
+        "X5": ["空气悬架", "xDrive四驱", "水晶挡把", "B&W钻石音响", "专业驾驶辅助"],
+    },
+    "奔驰": {
+        "C级": ["Burmester音响", "64色氛围灯", "MBUX系统", "驾驶辅助组件"],
+        "E级": ["后排座椅调节", "Burmester 3D音响", "数字大灯", "AIRMATIC空气悬架"],
+        "S级": ["后排行政座椅", "Burmester 4D音响", "AR-HUD", "后轮转向", "魔毯悬架"],
+    },
+    "丰田": {
+        "卡罗拉": ["Toyota Safety Sense", "倒车影像", "自动空调", "电动天窗"],
+        "凯美瑞": ["Toyota Safety Sense", "HUD抬头显示", "JBL音响", "全景天窗", "座椅通风"],
+        "汉兰达": ["Toyota Safety Sense", "7座", "电动尾门", "JBL音响", "全景天窗"],
+    },
+    "比亚迪": {
+        "汉": ["DiPilot智驾", "刀片电池", "丹拿音响", "座椅按摩", "电动尾翼"],
+        "宋PLUS": ["DiPilot智驾", "刀片电池", "12.8寸旋转屏", "VTOL外放电"],
+        "海豚": ["刀片电池", "12.8寸旋转屏", "手机NFC钥匙", "热泵空调"],
+    },
+    "特斯拉": {
+        "Model 3": ["Autopilot", "全景玻璃车顶", "15寸触控屏", "哨兵模式", "OTA升级"],
+        "Model Y": ["Autopilot", "HEPA滤芯", "全景玻璃车顶", "电动尾门", "露营模式"],
+    },
+    "理想": {
+        "理想L7": ["理想AD Max智驾", "空气悬架", "后排娱乐屏", "Nappa真皮", "冰箱"],
+        "理想L8": ["理想AD Max智驾", "空气悬架", "6座", "后排娱乐屏", "冰箱"],
+        "理想L9": ["理想AD Max智驾", "空气悬架", "OLED后排屏", "冰箱", "21扬声器"],
+    },
+    "蔚来": {
+        "ET5": ["NIO Pilot", "换电", "NOMI语音助手", "7.1.4音响", "电吸门"],
+        "ES6": ["NIO Pilot", "换电", "空气悬架", "女王副驾", "杜比全景声"],
+    },
+}
+
+
+def get_transmissions(brand_key: str, series_name: str = "") -> list[str]:
+    """根据品牌和车系返回推荐的变速箱选项"""
+    from src.brands import get_brand_info
+
+    # 从车系名判断是否为新能源
+    info = get_series_info(brand_key, series_name) if series_name else None
+    brand_info = get_brand_info(brand_key) or {}
+
+    # 默认变速箱列表
+    defaults = ["自动 (AT)", "手动 (MT)", "CVT无级变速", "双离合 (DCT)", "电动车单速变速箱"]
+
+    category = _BRAND_CATEGORY.get(brand_key)
+    if not category:
+        return defaults
+
+    return _TRANSMISSION_BY_CATEGORY.get(category, defaults)
+
+
+def get_series_configs(brand_key: str, series_name: str) -> list[str]:
+    """根据品牌和车系返回推荐的选装配置列表"""
+    brand_info = get_series(brand_key)
+    if not brand_info:
+        return _default_configs()
+
+    # 先查精确匹配
+    brand_cn = None
+    from src.brands import get_brand_info as _gbi
+    bi = _gbi(brand_key)
+    if bi:
+        brand_cn = bi["name_cn"]
+
+    if brand_cn and brand_cn in _SERIES_HIGHLIGHTS:
+        brand_configs = _SERIES_HIGHLIGHTS[brand_cn]
+        if series_name in brand_configs:
+            return brand_configs[series_name]
+        # 返回该品牌第一个车系的配置作为参考
+        for v in brand_configs.values():
+            return v
+
+    return _default_configs()
+
+
+def _default_configs() -> list[str]:
+    """默认通用配置选项"""
+    return [
+        "天窗/全景天窗", "真皮座椅", "座椅加热", "座椅通风",
+        "倒车影像", "360全景影像", "定速巡航", "自适应巡航",
+        "无钥匙进入/启动", "电动尾门", "自动空调", "LED大灯",
+    ]

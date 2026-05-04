@@ -15,7 +15,7 @@ from src.cleaner import clean_single_input, load_data, clean_data, print_cleanin
 from src.valuation import valuate
 from src.badcase import log_valuation, analyze_logs, detect_badcases, print_analysis_report
 from src.brands import BRANDS, get_brand_info, get_new_car_price, fuzzy_match_brand, normalize_brand
-from src.models_db import get_series_names, get_trims, get_price_range, generate_years
+from src.models_db import get_series_names, get_trims, get_price_range, generate_years, get_transmissions, get_series_configs
 
 st.set_page_config(
     page_title="二手车智能估价",
@@ -135,13 +135,18 @@ with st.sidebar:
     mileage_input = st.text_input("行驶里程 *", placeholder="如: 50000公里 或 5万公里",
                                    help="输入公里或万公里（>=10000视为公里，<10000视为万公里）")
 
-    col_t, col_e = st.columns(2)
-    with col_t:
-        transmission = st.selectbox("变速箱", options=TRANSMISSION_OPTIONS,
-                                     help="变速箱类型影响二手残值")
-    with col_e:
-        emission = st.selectbox("排放标准", options=EMISSION_OPTIONS,
-                                 help="影响迁入资格和残值")
+    # 变速箱（级联车系）
+    if brand_key and series and series in get_series_names(brand_key):
+        trans_options = get_transmissions(brand_key, series)
+        trans_label = f"变速箱 ({len(trans_options)}种)"
+    else:
+        trans_options = TRANSMISSION_OPTIONS
+        trans_label = "变速箱"
+    transmission = st.selectbox(trans_label, options=[""] + trans_options,
+                                 help="变速箱类型影响二手残值")
+
+    emission = st.selectbox("排放标准", options=EMISSION_OPTIONS,
+                             help="影响迁入资格和残值")
 
     col_c, col_co = st.columns(2)
     with col_c:
@@ -151,10 +156,16 @@ with st.sidebar:
         condition = st.selectbox("车况", options=CONDITION_OPTIONS,
                                   help="车况对价格影响最大")
 
-    # 配置选装
+    # 配置选装（级联车系）
+    if brand_key and series and series in get_series_names(brand_key):
+        config_options = get_series_configs(brand_key, series)
+        config_label = f"选装配置 ({series}亮点)"
+    else:
+        config_options = CONFIG_OPTIONS
+        config_label = "选装配置"
     configs = st.multiselect(
-        "选装配置",
-        options=CONFIG_OPTIONS,
+        config_label,
+        options=config_options,
         help="勾选车辆带有的配置（可多选），高配车溢价明显"
     )
     if configs:
