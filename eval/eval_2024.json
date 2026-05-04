@@ -1,0 +1,408 @@
+{
+  "mae_wan": 5.52,
+  "rmse_wan": 13.46,
+  "n_samples": 40,
+  "avg_confidence": 0.76,
+  "results": [
+    {
+      "brand": "魏牌",
+      "model": "2.0T 科技版",
+      "year": 2020,
+      "mileage_wan": 5.8,
+      "actual_wan": 7.69,
+      "est_wan": 9.5,
+      "error_wan": 1.8,
+      "confidence": 0.8
+    },
+    {
+      "brand": "众泰",
+      "model": "2.0T 自动极致之心版",
+      "year": 2018,
+      "mileage_wan": 3.9,
+      "actual_wan": 3.18,
+      "est_wan": 3.2,
+      "error_wan": 0.1,
+      "confidence": 0.75
+    },
+    {
+      "brand": "MINI",
+      "model": "1.6L ONE Baker Stree",
+      "year": 2012,
+      "mileage_wan": 5.9,
+      "actual_wan": 5.2,
+      "est_wan": 5.2,
+      "error_wan": 0.0,
+      "confidence": 0.8
+    },
+    {
+      "brand": "东南",
+      "model": "1.5L 手动风采版",
+      "year": 2015,
+      "mileage_wan": 6.7,
+      "actual_wan": 2.6,
+      "est_wan": 1.6,
+      "error_wan": 1.0,
+      "confidence": 0.75
+    },
+    {
+      "brand": "宾利",
+      "model": "4.0T V8",
+      "year": 2020,
+      "mileage_wan": 4.0,
+      "actual_wan": 185.8,
+      "est_wan": 190.0,
+      "error_wan": 4.2,
+      "confidence": 0.75
+    },
+    {
+      "brand": "零跑汽车",
+      "model": "后驱长续航版",
+      "year": 2022,
+      "mileage_wan": 2.5,
+      "actual_wan": 11.98,
+      "est_wan": 7.0,
+      "error_wan": 5.0,
+      "confidence": 0.75
+    },
+    {
+      "brand": "名爵",
+      "model": "1.5T 自动领潮版",
+      "year": 2023,
+      "mileage_wan": 2.1,
+      "actual_wan": 5.36,
+      "est_wan": 6.2,
+      "error_wan": 0.9,
+      "confidence": 0.8
+    },
+    {
+      "brand": "高合",
+      "model": "旗舰版 6座",
+      "year": 2022,
+      "mileage_wan": 1.9,
+      "actual_wan": 27.5,
+      "est_wan": 20.5,
+      "error_wan": 7.0,
+      "confidence": 0.75
+    },
+    {
+      "brand": "五菱汽车",
+      "model": "2.0L DHT 旗舰型",
+      "year": 2023,
+      "mileage_wan": 0.4,
+      "actual_wan": 6.66,
+      "est_wan": 0.8,
+      "error_wan": 5.9,
+      "confidence": 0.1
+    },
+    {
+      "brand": "MINI",
+      "model": "1.5T ONE",
+      "year": 2018,
+      "mileage_wan": 4.0,
+      "actual_wan": 8.88,
+      "est_wan": 10.5,
+      "error_wan": 1.6,
+      "confidence": 0.85
+    },
+    {
+      "brand": "Polestar极星",
+      "model": "首发版",
+      "year": 2021,
+      "mileage_wan": 2.1,
+      "actual_wan": 12.68,
+      "est_wan": 13.5,
+      "error_wan": 0.8,
+      "confidence": 0.75
+    },
+    {
+      "brand": "长安欧尚",
+      "model": "CX70T 1.5T 手动豪擎版",
+      "year": 2018,
+      "mileage_wan": 5.3,
+      "actual_wan": 2.98,
+      "est_wan": 3.9,
+      "error_wan": 0.9,
+      "confidence": 0.8
+    },
+    {
+      "brand": "特斯拉",
+      "model": "后轮驱动版",
+      "year": 2022,
+      "mileage_wan": 5.8,
+      "actual_wan": 17.7,
+      "est_wan": 15.8,
+      "error_wan": 1.9,
+      "confidence": 0.85
+    },
+    {
+      "brand": "阿维塔",
+      "model": "116度 后驱版",
+      "year": 2023,
+      "mileage_wan": 1.8,
+      "actual_wan": 20.98,
+      "est_wan": 19.8,
+      "error_wan": 1.2,
+      "confidence": 0.78
+    },
+    {
+      "brand": "长城",
+      "model": "越野版 2.0T汽油 自动四驱高阶版 标",
+      "year": 2021,
+      "mileage_wan": 5.5,
+      "actual_wan": 11.98,
+      "est_wan": 10.5,
+      "error_wan": 1.5,
+      "confidence": 0.8
+    },
+    {
+      "brand": "东南",
+      "model": "1.5T 自动精英型",
+      "year": 2016,
+      "mileage_wan": 6.6,
+      "actual_wan": 2.58,
+      "est_wan": 2.5,
+      "error_wan": 0.1,
+      "confidence": 0.75
+    },
+    {
+      "brand": "斯柯达",
+      "model": "1.6L 自动逸杰版",
+      "year": 2012,
+      "mileage_wan": 13.2,
+      "actual_wan": 2.18,
+      "est_wan": 2.5,
+      "error_wan": 0.3,
+      "confidence": 0.85
+    },
+    {
+      "brand": "宝马",
+      "model": "xDrive40i M运动套装",
+      "year": 2020,
+      "mileage_wan": 7.0,
+      "actual_wan": 48.8,
+      "est_wan": 30.5,
+      "error_wan": 18.3,
+      "confidence": 0.8
+    },
+    {
+      "brand": "标致",
+      "model": "1.6L 自动豪华版",
+      "year": 2017,
+      "mileage_wan": 7.2,
+      "actual_wan": 4.88,
+      "est_wan": 4.2,
+      "error_wan": 0.7,
+      "confidence": 0.8
+    },
+    {
+      "brand": "长城",
+      "model": "越野版 2.0T汽油 自动四驱高阶版 标",
+      "year": 2020,
+      "mileage_wan": 3.6,
+      "actual_wan": 11.17,
+      "est_wan": 9.5,
+      "error_wan": 1.7,
+      "confidence": 0.8
+    },
+    {
+      "brand": "特斯拉",
+      "model": "90D",
+      "year": 2017,
+      "mileage_wan": 10.3,
+      "actual_wan": 23.9,
+      "est_wan": 15.5,
+      "error_wan": 8.4,
+      "confidence": 0.8
+    },
+    {
+      "brand": "三菱",
+      "model": "致尚版 1.8L CVT限量款",
+      "year": 2011,
+      "mileage_wan": 15.0,
+      "actual_wan": 2.18,
+      "est_wan": 1.6,
+      "error_wan": 0.6,
+      "confidence": 0.78
+    },
+    {
+      "brand": "红旗",
+      "model": "2.0T 智联旗悦版",
+      "year": 2022,
+      "mileage_wan": 4.0,
+      "actual_wan": 22.5,
+      "est_wan": 12.2,
+      "error_wan": 10.2,
+      "confidence": 0.8
+    },
+    {
+      "brand": "凯迪拉克",
+      "model": "28T 领先型",
+      "year": 2018,
+      "mileage_wan": 8.0,
+      "actual_wan": 14.68,
+      "est_wan": 11.2,
+      "error_wan": 3.4,
+      "confidence": 0.8
+    },
+    {
+      "brand": "起亚",
+      "model": "2.0L 自动PREMIUM",
+      "year": 2014,
+      "mileage_wan": 9.2,
+      "actual_wan": 3.98,
+      "est_wan": 3.9,
+      "error_wan": 0.1,
+      "confidence": 0.8
+    },
+    {
+      "brand": "哪吒汽车",
+      "model": "580 四驱版",
+      "year": 2023,
+      "mileage_wan": 1.0,
+      "actual_wan": 13.88,
+      "est_wan": 9.2,
+      "error_wan": 4.6,
+      "confidence": 0.75
+    },
+    {
+      "brand": "丰田",
+      "model": "2.4L 自动 前驱 7座 平行进口",
+      "year": 2019,
+      "mileage_wan": 10.1,
+      "actual_wan": 19.8,
+      "est_wan": 15.8,
+      "error_wan": 4.1,
+      "confidence": 0.8
+    },
+    {
+      "brand": "宝马",
+      "model": "425i M运动曜夜套装",
+      "year": 2024,
+      "mileage_wan": 0.4,
+      "actual_wan": 37.99,
+      "est_wan": 1.0,
+      "error_wan": 37.0,
+      "confidence": 0.15
+    },
+    {
+      "brand": "深蓝汽车",
+      "model": "515纯电版",
+      "year": 2023,
+      "mileage_wan": 3.5,
+      "actual_wan": 12.58,
+      "est_wan": 9.0,
+      "error_wan": 3.6,
+      "confidence": 0.8
+    },
+    {
+      "brand": "日产",
+      "model": "1.6L CVT智能型",
+      "year": 2014,
+      "mileage_wan": 14.0,
+      "actual_wan": 3.38,
+      "est_wan": 3.3,
+      "error_wan": 0.1,
+      "confidence": 0.8
+    },
+    {
+      "brand": "岚图",
+      "model": "四驱标准增程专属豪华套装",
+      "year": 2022,
+      "mileage_wan": 1.6,
+      "actual_wan": 13.99,
+      "est_wan": 14.8,
+      "error_wan": 0.8,
+      "confidence": 0.78
+    },
+    {
+      "brand": "法拉利",
+      "model": "3.9T 标准型",
+      "year": 2018,
+      "mileage_wan": 4.8,
+      "actual_wan": 129.0,
+      "est_wan": 200.0,
+      "error_wan": 71.0,
+      "confidence": 0.75
+    },
+    {
+      "brand": "零跑汽车",
+      "model": "性能版",
+      "year": 2022,
+      "mileage_wan": 5.0,
+      "actual_wan": 12.5,
+      "est_wan": 5.2,
+      "error_wan": 7.2,
+      "confidence": 0.75
+    },
+    {
+      "brand": "启辰",
+      "model": "1.6L 自动精彩版",
+      "year": 2014,
+      "mileage_wan": 9.7,
+      "actual_wan": 1.55,
+      "est_wan": 2.5,
+      "error_wan": 0.9,
+      "confidence": 0.75
+    },
+    {
+      "brand": "领克",
+      "model": "1.5TD DCT型Pro版",
+      "year": 2019,
+      "mileage_wan": 4.5,
+      "actual_wan": 7.31,
+      "est_wan": 6.5,
+      "error_wan": 0.8,
+      "confidence": 0.8
+    },
+    {
+      "brand": "玛莎拉蒂",
+      "model": "3.0T Levante S",
+      "year": 2016,
+      "mileage_wan": 4.9,
+      "actual_wan": 37.98,
+      "est_wan": 31.5,
+      "error_wan": 6.5,
+      "confidence": 0.8
+    },
+    {
+      "brand": "本田",
+      "model": "220TURBO CVT豪华版",
+      "year": 2019,
+      "mileage_wan": 7.0,
+      "actual_wan": 7.7,
+      "est_wan": 9.2,
+      "error_wan": 1.5,
+      "confidence": 0.85
+    },
+    {
+      "brand": "奔驰",
+      "model": "E 260 L 运动型",
+      "year": 2014,
+      "mileage_wan": 10.3,
+      "actual_wan": 9.88,
+      "est_wan": 13.5,
+      "error_wan": 3.6,
+      "confidence": 0.8
+    },
+    {
+      "brand": "理想汽车",
+      "model": "增程6座版",
+      "year": 2022,
+      "mileage_wan": 1.9,
+      "actual_wan": 19.18,
+      "est_wan": 19.8,
+      "error_wan": 0.6,
+      "confidence": 0.82
+    },
+    {
+      "brand": "捷途",
+      "model": "1.5T DCT智行版 6座",
+      "year": 2019,
+      "mileage_wan": 6.0,
+      "actual_wan": 4.68,
+      "est_wan": 5.2,
+      "error_wan": 0.6,
+      "confidence": 0.75
+    }
+  ]
+}

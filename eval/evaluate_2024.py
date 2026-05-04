@@ -86,7 +86,7 @@ def evaluate_2024(n_samples: int = 40):
             "confidence": v.get("confidence", 0),
         })
 
-        icon = "✓" if abs_error < actual_wan * 0.3 else ("△" if abs_error < actual_wan * 0.5 else "✗")
+        icon = "[OK]" if abs_error < actual_wan * 0.3 else ("[~]" if abs_error < actual_wan * 0.5 else "[X]")
         print(f"  [{len(results):02d}] {icon} {brand:10s} {model[:12]:12s} {year}年 {mileage/10000:.1f}万km | "
               f"实际:{actual_wan:>6.1f}万 | 估值:{est_mid:>6.1f}万 | "
               f"误差:{abs_error:>5.1f}万 | 置信度{v.get('confidence',0):.0%}")
