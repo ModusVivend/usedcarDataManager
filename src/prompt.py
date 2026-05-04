@@ -138,7 +138,9 @@ def build_few_shot_messages() -> list:
 
 
 def build_user_prompt(brand: str, model: str, year: int, mileage_km: float,
-                      city: str = "", condition: str = "", extra: str = "") -> str:
+                      city: str = "", condition: str = "", extra: str = "",
+                      version: str = "", transmission: str = "", emission: str = "",
+                      color: str = "", configs: list[str] | None = None) -> str:
     """
     构建用户估值请求 Prompt。
 
@@ -149,6 +151,11 @@ def build_user_prompt(brand: str, model: str, year: int, mileage_km: float,
         mileage_km: 里程（公里）
         city: 所在城市（可选）
         condition: 车况描述（可选）
+        version: 版本/配置款（可选）
+        transmission: 变速箱类型（可选）
+        emission: 排放标准（可选）
+        color: 车身颜色（可选）
+        configs: 选装配置列表（可选）
         extra: 额外信息（可选）
 
     返回完整的用户Prompt字符串
@@ -166,22 +173,36 @@ def build_user_prompt(brand: str, model: str, year: int, mileage_km: float,
         f"  上牌年份: {year}年",
         f"  行驶里程: {mileage_display}",
     ]
-    if city:
-        parts.append(f"  所在城市: {city}")
+    if version:
+        parts.append(f"  版本/配置款: {version}")
+    if transmission:
+        parts.append(f"  变速箱: {transmission}")
+    if emission:
+        parts.append(f"  排放标准: {emission}")
+    if color:
+        parts.append(f"  车身颜色: {color}")
     if condition:
         parts.append(f"  车况: {condition}")
+    if configs:
+        parts.append(f"  选装配置: {', '.join(configs)}")
+    if city:
+        parts.append(f"  所在城市: {city}")
     if extra:
         parts.append(f"  备注: {extra}")
 
-    parts.append(f"\n请按JSON格式输出估值结果。")
+    parts.append(f"\n请按JSON格式输出估值结果。注意：配置越高溢价越多，热销颜色(白/黑)比冷门颜色保值。")
     return "\n".join(parts)
 
 
 def build_messages(brand: str, model: str, year: int, mileage_km: float,
-                   city: str = "", condition: str = "", extra: str = "") -> list[dict]:
+                   extra_context: dict | None = None) -> list[dict]:
     """
     构建完整的 messages 数组（System + Few-shot + User）
+
+    Args:
+        extra_context: {version, transmission, emission, color, condition, configs, city, extra}
     """
+    ctx = extra_context or {}
     messages = [{"role": "system", "content": SYSTEM_PROMPT + "\n\n" + OUTPUT_SCHEMA_DESC}]
 
     # 添加 few-shot 示例
@@ -190,7 +211,17 @@ def build_messages(brand: str, model: str, year: int, mileage_km: float,
         messages.append({"role": "assistant", "content": json.dumps(ex["output"], ensure_ascii=False)})
 
     # 添加用户实际请求
-    user_prompt = build_user_prompt(brand, model, year, mileage_km, city, condition, extra)
+    user_prompt = build_user_prompt(
+        brand, model, year, mileage_km,
+        version=ctx.get("version", ""),
+        transmission=ctx.get("transmission", ""),
+        emission=ctx.get("emission", ""),
+        color=ctx.get("color", ""),
+        condition=ctx.get("condition", ""),
+        configs=ctx.get("configs", []),
+        city=ctx.get("city", ""),
+        extra=ctx.get("extra", ""),
+    )
     messages.append({"role": "user", "content": user_prompt})
 
     return messages

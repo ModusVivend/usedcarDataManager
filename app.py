@@ -24,75 +24,112 @@ st.set_page_config(
 )
 
 # ============================================================
+# 可选项常量
+# ============================================================
+TRANSMISSION_OPTIONS = ["", "手动 (MT)", "自动 (AT)", "CVT无级变速", "双离合 (DCT)", "AMT", "手动/自动一体"]
+EMISSION_OPTIONS = ["", "国IV", "国V", "国VI(A)", "国VI(B)", "欧IV", "欧V", "欧VI", "不明确"]
+COLOR_OPTIONS = ["", "白色", "黑色", "银色", "灰色", "红色", "蓝色", "棕色", "金色", "绿色", "其他"]
+CONDITION_OPTIONS = ["", "优秀 (准新车,全程4S保养)", "良好 (正常使用,少量划痕)", "一般 (有维修记录)", "较差 (事故车/泡水车)"]
+CONFIG_OPTIONS = [
+    "天窗", "真皮座椅", "座椅加热/通风", "导航/GPS", "倒车影像",
+    "360全景影像", "定速巡航", "自适应巡航", "自动泊车",
+    "无钥匙进入/启动", "电动尾门", "LED大灯", "自动空调",
+    "后排独立空调", "空气悬架", "四驱", "换挡拨片",
+    "HUD抬头显示", "品牌音响", "后排娱乐系统",
+]
+
+# ============================================================
 # 侧边栏 - 输入区
 # ============================================================
 with st.sidebar:
     st.title("🚗 二手车智能估价")
-    st.markdown("输入车辆信息，获取AI驱动的智能估价")
+    st.markdown("输入车辆详细信息，获取AI多因子智能估价")
     st.markdown("---")
 
-    # 品牌选择
+    # ── 基本信息 ──
+    st.subheader("📌 基本信息")
+
+    # 品牌
     brand_options = sorted([
         f"{info['name_cn']} ({info['name_en']})"
         for info in BRANDS.values()
     ], key=lambda x: x.split("(")[0])
 
     brand_selected = st.selectbox(
-        "品牌",
+        "品牌 *",
         options=[""] + brand_options,
         help="选择或输入车辆品牌"
     )
-
-    # 或手动输入
     brand_manual = st.text_input("或手动输入品牌", placeholder="如: 奔驰、BMW、大众...")
-
-    # 确定使用的品牌
     raw_brand = brand_manual.strip() or (brand_selected.split("(")[0].strip() if brand_selected else "")
 
-    # 车型输入
-    model = st.text_input("车型", placeholder="如: 3系、卡罗拉、Model Y...")
+    # 车系
+    model = st.text_input("车系 *", placeholder="如: 3系、卡罗拉、Model Y...")
 
-    # 自动补全提示
+    # 品牌自动补全
     if raw_brand:
         brand_key = normalize_brand(raw_brand)
         if brand_key:
             models = get_models(brand_key)
             if models:
-                with st.expander(f"📋 {raw_brand} 热门车型"):
-                    for m in models:
-                        if st.button(m, key=f"model_{m}"):
+                cols_model = st.columns(4)
+                for i, m in enumerate(models[:12]):
+                    with cols_model[i % 4]:
+                        if st.button(m, key=f"model_{m}", use_container_width=True):
                             st.session_state["selected_model"] = m
-
-    # 使用session_state中的车型选择
     if "selected_model" in st.session_state and not model:
         model = st.session_state["selected_model"]
 
-    # 年份
-    year = st.number_input(
-        "上牌年份",
-        min_value=1990, max_value=2026, value=2022,
-        help="车辆首次上牌的年份"
+    # 版本/配置款
+    version = st.text_input(
+        "版本/配置款",
+        placeholder="如: 320Li M运动套装、豪华版、尊贵版、Performance...",
+        help="具体的配置版本名称，越详细估价越准"
     )
 
-    # 里程
-    mileage_input = st.text_input(
-        "行驶里程",
-        placeholder="如: 50000 (公里) 或 5 (万公里)",
-        help="输入公里数或万公里数（≥10000视为公里，<10000视为万公里）"
-    )
+    st.markdown("---")
 
-    # 额外选项
-    with st.expander("⚙️ 更多选项"):
-        city = st.text_input("所在城市", placeholder="如: 北京")
-        condition = st.selectbox(
-            "车况",
-            options=["良好", "一般", "优秀", "需维修"],
-            index=0
-        )
-        extra = st.text_area("备注", placeholder="补充信息...")
+    # ── 车辆参数 ──
+    st.subheader("⚙️ 车辆参数")
+
+    col_y, col_m = st.columns(2)
+    with col_y:
+        year = st.number_input("上牌年份 *", min_value=1990, max_value=2026, value=2022)
+    with col_m:
+        mileage_input = st.text_input("行驶里程 *", placeholder="50000公里 或 5万公里")
+
+    col_t, col_e = st.columns(2)
+    with col_t:
+        transmission = st.selectbox("变速箱", options=TRANSMISSION_OPTIONS,
+                                     help="变速箱类型影响二手残值")
+    with col_e:
+        emission = st.selectbox("排放标准", options=EMISSION_OPTIONS,
+                                 help="影响迁入资格和残值")
+
+    col_c, col_co = st.columns(2)
+    with col_c:
+        color = st.selectbox("车身颜色", options=COLOR_OPTIONS,
+                              help="热销色（白/黑）通常更保值")
+    with col_co:
+        condition = st.selectbox("车况", options=CONDITION_OPTIONS,
+                                  help="车况对价格影响最大")
+
+    # 配置选装
+    configs = st.multiselect(
+        "选装配置",
+        options=CONFIG_OPTIONS,
+        help="勾选车辆带有的配置（可多选），高配车溢价明显"
+    )
+    if configs:
+        st.caption(f"已选 {len(configs)} 项: {', '.join(configs[:5])}{'...' if len(configs) > 5 else ''}")
+
+    # 城市
+    city = st.text_input("所在城市", placeholder="如: 北京、上海、广州...",
+                          help="一线城市通常价格略高")
+
+    st.markdown("---")
 
     # 估价按钮
-    st.markdown("---")
     col1, col2 = st.columns(2)
     with col1:
         estimate_btn = st.button("🔍 智能估价", type="primary", use_container_width=True)
@@ -112,14 +149,31 @@ with tab1:
         # 数据清洗
         cleaned = clean_single_input(raw_brand, model, year, mileage_input)
 
+        # 附加上下文到估值请求
+        extra_context = {}
+        if version.strip():
+            extra_context["version"] = version.strip()
+        if transmission:
+            extra_context["transmission"] = transmission
+        if emission:
+            extra_context["emission"] = emission
+        if color:
+            extra_context["color"] = color
+        if condition:
+            extra_context["condition"] = condition
+        if configs:
+            extra_context["configs"] = configs
+        if city.strip():
+            extra_context["city"] = city.strip()
+
         if not cleaned["valid"]:
             st.error("❌ 输入数据校验失败")
             for e in cleaned["errors"]:
                 st.error(f"  • {e}")
         else:
             with st.spinner("AI正在分析车辆信息..."):
-                result = valuate(cleaned)
-                log_valuation(result)  # 记录日志
+                result = valuate(cleaned, extra_context=extra_context)
+                log_valuation(result)
 
             # 显示警告
             for w in cleaned.get("warnings", []):
@@ -132,11 +186,17 @@ with tab1:
             # 价格展示
             col_price, col_conf, col_meta = st.columns([2, 1, 1])
             with col_price:
+                calibrated_label = ""
+                if valuation.get("_calibrated"):
+                    raw_low = valuation.get("price_low_raw", valuation["price_low"])
+                    raw_high = valuation.get("price_high_raw", valuation["price_high"])
+                    calibrated_label = f"<br><span style='font-size:11px;opacity:0.7;'>原始估价: {raw_low}-{raw_high}万 (已校准)</span>"
+
                 st.markdown(f"""
                 <div style="text-align:center; padding:20px; background:linear-gradient(135deg,#667eea,#764ba2); border-radius:15px; color:white;">
                     <p style="font-size:14px; margin:0; opacity:0.9;">💰 智能估价区间</p>
                     <h1 style="font-size:48px; margin:10px 0;">{valuation['price_low']} - {valuation['price_high']} 万</h1>
-                    <p style="font-size:12px; margin:0; opacity:0.8;">新车指导价约 {valuation.get('estimated_original_price', 'N/A')} 万</p>
+                    <p style="font-size:12px; margin:0; opacity:0.8;">新车指导价约 {valuation.get('estimated_original_price', 'N/A')} 万 {calibrated_label}</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -148,7 +208,7 @@ with tab1:
                     <p style="font-size:14px; margin:0;">📊 置信度</p>
                     <h1 style="font-size:48px; margin:10px 0; color:{conf_color};">{confidence:.0%}</h1>
                     <p style="font-size:12px; margin:0; color:#666;">
-                        {"✅ 高置信度" if confidence >= 0.8 else ("⚠️ 中等置信度" if confidence >= 0.6 else "❌ 低置信度")}
+                        {"高置信度" if confidence >= 0.8 else ("中等置信度" if confidence >= 0.6 else "低置信度")}
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
@@ -165,39 +225,51 @@ with tab1:
                 </div>
                 """, unsafe_allow_html=True)
 
+            # 车辆信息摘要
             st.markdown("---")
+            st.subheader("📋 车辆信息摘要")
+            summary_parts = [f"**{raw_brand} {model}**"]
+            if version.strip():
+                summary_parts.append(f"版本: {version.strip()}")
+            summary_parts.append(f"{year}年上牌 | 行驶{mileage_input}")
+            if transmission:
+                summary_parts.append(f"变速箱: {transmission}")
+            if emission:
+                summary_parts.append(f"排放: {emission}")
+            if color:
+                summary_parts.append(f"颜色: {color}")
+            if condition:
+                summary_parts.append(f"车况: {condition}")
+            if configs:
+                summary_parts.append(f"配置: {len(configs)}项")
+            st.markdown(" | ".join(summary_parts))
 
             # 因子分析
             st.subheader("🔍 多因子分析")
             factor_analysis = valuation.get("factor_analysis", {})
             if factor_analysis:
                 factor_data = []
+                name_map = {
+                    "brand_value": "品牌保值率",
+                    "model_popularity": "车型热度",
+                    "year_depreciation": "年份折旧",
+                    "mileage_depreciation": "里程折损",
+                    "condition_estimate": "车况预估",
+                    "config_premium": "配置溢价",
+                }
                 for factor_name, info in factor_analysis.items():
-                    name_map = {
-                        "brand_value": "品牌保值率",
-                        "model_popularity": "车型热度",
-                        "year_depreciation": "年份折旧",
-                        "mileage_depreciation": "里程折损",
-                        "condition_estimate": "车况预估"
-                    }
                     display_name = name_map.get(factor_name, factor_name)
-                    score = info.get("score", 0)
-                    comment = info.get("comment", "")
+                    score = info.get("score", 0) if isinstance(info, dict) else 70
+                    comment = info.get("comment", "") if isinstance(info, dict) else str(info)
                     factor_data.append({
                         "因子": display_name,
                         "得分": f"{score}/100",
-                        "评分": score,
                         "分析": comment,
                     })
 
                 if factor_data:
-                    df_factors = pd.DataFrame(factor_data)
-                    # 进度条列
-                    df_factors["评分条"] = df_factors["评分"].apply(
-                        lambda s: f"<div style='background:linear-gradient(90deg,#4CAF50 {s}%,#ddd {s}%);height:10px;border-radius:5px;'></div>"
-                    )
                     st.dataframe(
-                        df_factors[["因子", "得分", "分析"]],
+                        pd.DataFrame(factor_data),
                         use_container_width=True,
                         hide_index=True,
                     )
@@ -231,11 +303,9 @@ with tab1:
             df = load_data(batch_upload)
             st.info(f"已加载 {len(df)} 条记录")
 
-            # 尝试清洗
             df_clean, report = clean_data(df)
             st.success(f"清洗完成: {report['final_rows']}/{report['original_rows']} 条有效记录")
 
-            # 限制批量数量（避免过多API调用）
             max_batch = 5
             if len(df_clean) > max_batch:
                 st.warning(f"批量估值限制 {max_batch} 条/次，将处理前 {max_batch} 条")
@@ -326,26 +396,26 @@ with tab3:
     ## 📖 使用说明
 
     ### 🎯 核心功能
-    输入车辆的**品牌、车型、年份、里程**，AI将运用多因子估值模型给出智能估价。
+    输入车辆的**品牌、车系、版本、年份、里程、变速箱、配置**等信息，AI将运用多因子估值模型给出智能估价。
 
     ### 📊 估值方法论
-    本系统采用**6因子加权估值模型**：
+    本系统采用**多因子加权估值模型**：
     1. **品牌保值率** (25%) — 日系最保值，国产新能源折旧快
     2. **车型热度** (20%) — 热门车型二手流通性好
     3. **年份折旧** (25%) — 前3年折旧最快
     4. **里程折损** (15%) — 年均里程越少越好
-    5. **车况配置** (10%) — 默认估为"良好"
+    5. **车况配置** (10%) — 高配溢价、事故折价
     6. **区域因素** (5%) — 一线城市略高
 
-    ### 💡 数据清洗能力展示
+    ### 💡 数据清洗能力
     - 品牌模糊匹配：支持中英文、别名、近似名
     - 里程智能识别：自动判断"公里"vs"万公里"
     - 异常值拦截：年份超出范围、负里程等
 
     ### 🔍 BadCase分析
     - 自动检测6类估值异常
+    - 4类根因分类体系
     - 每次估价自动记录到JSONL日志
-    - 提供统计分析和可视化
 
     ### 📁 批量估价
     支持上传CSV文件批量估价（需包含 brand/model/year/mileage 列）
@@ -353,8 +423,8 @@ with tab3:
     ### ⚙️ 技术栈
     - **前端**: Streamlit
     - **AI模型**: DeepSeek Chat
-    - **数据处理**: pandas
-    - **评测框架**: 独立Python脚本
+    - **数据处理**: pandas + NumPy
+    - **评测框架**: MAE/MAPE/区间重叠率
     """)
 
 # ============================================================

@@ -104,13 +104,14 @@ def validate_valuation(result: dict, brand_display: str, model: str, year: int, 
     return warnings
 
 
-def valuate(cleaned_input: dict, use_simple_prompt: bool = False) -> dict:
+def valuate(cleaned_input: dict, use_simple_prompt: bool = False, extra_context: dict | None = None) -> dict:
     """
     核心估值函数。
 
     Args:
         cleaned_input: clean_single_input() 的输出
         use_simple_prompt: 是否使用简化版Prompt（用于对比测试）
+        extra_context: 额外的车辆信息 {version, transmission, emission, color, condition, configs, city}
 
     Returns:
         {
@@ -131,8 +132,8 @@ def valuate(cleaned_input: dict, use_simple_prompt: bool = False) -> dict:
     year = cleaned_input["year"]
     mileage_km = cleaned_input["mileage_km"]
 
-    # 构建 messages
-    messages = build_messages(brand_display or brand_key, model, year, mileage_km)
+    # 构建 messages（含额外上下文）
+    messages = build_messages(brand_display or brand_key, model, year, mileage_km, extra_context)
 
     # 调用API
     api_result = chat_json(messages)
