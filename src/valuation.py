@@ -5,11 +5,20 @@
 - 记录到 BadCase 日志
 """
 
-from typing import Any
+from typing import Any, Callable
 from datetime import datetime
 from src.prompt import build_messages
 from src.api_client import chat_json
 from src.brands import get_brand_info, get_new_car_price, estimate_base_price
+
+# 全局校准器（由 evaluate_real.py 在评测前设置）
+_calibrator: Callable | None = None
+
+
+def set_calibrator(cal: Callable | None):
+    """设置全局价格校准器"""
+    global _calibrator
+    _calibrator = cal
 
 CURRENT_YEAR = 2026
 
@@ -141,6 +150,24 @@ def valuate(cleaned_input: dict, use_simple_prompt: bool = False) -> dict:
         valuation.setdefault("estimated_original_price", estimate_base_price(brand_key or "", model))
         valuation.setdefault("factor_analysis", {})
         valuation.setdefault("comprehensive_reasoning", "")
+
+        # 价格校准（如果设置了校准器）
+        if _calibrator:
+            try:
+                mid_before = (valuation["price_low"] + valuation["price_high"]) / 2
+                mid_yuan = mid_before * 10000  # 万元→元
+                car_age = cleaned_input.get("car_age", 3)
+                calibrated_yuan = _calibrator(mid_yuan, car_age)
+                calibrated_wan = calibrated_yuan / 10000  # 元→万元
+                # 按比例调整 high/low
+                ratio = calibrated_wan / mid_before if mid_before > 0 else 1.0
+                valuation["price_low_raw"] = valuation["price_low"]
+                valuation["price_high_raw"] = valuation["price_high"]
+                valuation["price_low"] = round(valuation["price_low"] * ratio, 1)
+                valuation["price_high"] = round(valuation["price_high"] * ratio, 1)
+                valuation["_calibrated"] = True
+            except Exception:
+                pass  # 校准失败不影响主流程
 
         result = {
             "ok": True,
