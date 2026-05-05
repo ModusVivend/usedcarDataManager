@@ -77,7 +77,13 @@ def load_github_dataset() -> pd.DataFrame:
     """加载 GitHub 2024 数据集（含新能源字段）"""
     path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                         "data", "raw", "usedCars.csv")
-    df = pd.read_csv(path)
+    # 尝试多种编码
+    for enc in ["utf-8-sig", "utf-8", "gbk", "gb2312", "gb18030", "latin1"]:
+        try:
+            df = pd.read_csv(path, encoding=enc)
+            break
+        except (UnicodeDecodeError, UnicodeError):
+            continue
     df = df.rename(columns={
         "brand_name": "brand",
         "car_name": "model",

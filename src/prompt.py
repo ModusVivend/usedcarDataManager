@@ -194,6 +194,24 @@ def build_user_prompt(brand: str, model: str, year: int, mileage_km: float,
     return "\n".join(parts)
 
 
+def build_user_prompt_with_anchor(brand: str, model: str, year: int, mileage_km: float,
+                                   official_price_low: float = 0, official_price_high: float = 0,
+                                   **kwargs) -> str:
+    """
+    带新车指导价锚点的 Prompt —— LLM 不再盲猜原价，只需计算折旧。
+    """
+    base = build_user_prompt(brand, model, year, mileage_km, **kwargs)
+
+    if official_price_low > 0 and official_price_high > 0:
+        anchor = (
+            f"\n【参考信息】该车型新车指导价约 {official_price_low:.0f}-{official_price_high:.0f} 万元。"
+            f"请以此为基准，根据车龄、里程、车况计算折旧后的当前市场价。"
+        )
+        return base + anchor
+
+    return base
+
+
 def build_messages(brand: str, model: str, year: int, mileage_km: float,
                    extra_context: dict | None = None) -> list[dict]:
     """
@@ -221,9 +239,14 @@ def build_messages(brand: str, model: str, year: int, mileage_km: float,
         messages.append({"role": "user", "content": f"请评估以下二手车:\n{ex['input']}"})
         messages.append({"role": "assistant", "content": json.dumps(ex["output"], ensure_ascii=False)})
 
-    # 添加用户实际请求
-    user_prompt = build_user_prompt(
+    # 添加用户实际请求（带新车指导价锚点）
+    official_low = ctx.get("official_price_low", 0)
+    official_high = ctx.get("official_price_high", 0)
+
+    user_prompt = build_user_prompt_with_anchor(
         brand, model, year, mileage_km,
+        official_price_low=official_low,
+        official_price_high=official_high,
         version=ctx.get("version", ""),
         transmission=ctx.get("transmission", ""),
         emission=ctx.get("emission", ""),

@@ -132,7 +132,20 @@ def valuate(cleaned_input: dict, use_simple_prompt: bool = False, extra_context:
     year = cleaned_input["year"]
     mileage_km = cleaned_input["mileage_km"]
 
-    # 构建 messages（含额外上下文）
+    # 查新车指导价，注入 Prompt 作为锚点
+    if extra_context is None:
+        extra_context = {}
+    if "official_price_low" not in extra_context:
+        try:
+            from src.models_db import get_price_range
+            pr = get_price_range(brand_key or "", model)
+            if pr:
+                extra_context["official_price_low"] = pr[0]
+                extra_context["official_price_high"] = pr[1]
+        except Exception:
+            pass
+
+    # 构建 messages（含额外上下文+新车指导价锚点）
     messages = build_messages(brand_display or brand_key, model, year, mileage_km, extra_context)
 
     # 调用API
